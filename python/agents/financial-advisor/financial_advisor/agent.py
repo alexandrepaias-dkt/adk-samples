@@ -12,8 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Financial coordinator: provide reasonable investment strategies"""
+"""Financial coordinator: provide reasonable investment strategies."""
 
+import os
+
+import google.auth
 from google.adk.agents import LlmAgent
 from google.adk.tools.agent_tool import AgentTool
 
@@ -22,6 +25,16 @@ from .sub_agents.data_analyst import data_analyst_agent
 from .sub_agents.execution_analyst import execution_analyst_agent
 from .sub_agents.risk_analyst import risk_analyst_agent
 from .sub_agents.trading_analyst import trading_analyst_agent
+
+# To use AI Studio credentials:
+# 1. Create a .env file in the /app directory with:
+#    GOOGLE_GENAI_USE_VERTEXAI=FALSE
+#    GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
+# 2. This will override the default Vertex AI configuration
+_, project_id = google.auth.default()
+os.environ.setdefault("GOOGLE_CLOUD_PROJECT", project_id)
+os.environ.setdefault("GOOGLE_CLOUD_LOCATION", "global")
+os.environ.setdefault("GOOGLE_GENAI_USE_VERTEXAI", "True")
 
 MODEL = "gemini-2.5-pro"
 
