@@ -15,16 +15,20 @@
 import os
 from dataclasses import dataclass
 
-import google.auth
+use_vertex = os.getenv("GOOGLE_GENAI_USE_VERTEXAI", "True").lower() in ("1", "true", "yes")
 
-# To use AI Studio credentials:
-# 1. Create a .env file in the /app directory with:
-#    GOOGLE_GENAI_USE_VERTEXAI=FALSE
-#    GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
-# 2. This will override the default Vertex AI configuration
-_, project_id = google.auth.default()
-os.environ.setdefault("GOOGLE_CLOUD_PROJECT", project_id)
-os.environ.setdefault("GOOGLE_CLOUD_LOCATION", "global")
+if use_vertex:
+    import google.auth
+    _, project_id = google.auth.default()
+    os.environ.setdefault("GOOGLE_CLOUD_PROJECT", project_id)
+    os.environ.setdefault("GOOGLE_CLOUD_LOCATION", "global")
+else:
+    if not os.getenv("GOOGLE_API_KEY"):
+        raise RuntimeError(
+            "GOOGLE_API_KEY is required in AI Studio mode. "
+            "Set GOOGLE_GENAI_USE_VERTEXAI=FALSE and provide GOOGLE_API_KEY in app/.env"
+        )
+
 os.environ.setdefault("GOOGLE_GENAI_USE_VERTEXAI", "True")
 
 
